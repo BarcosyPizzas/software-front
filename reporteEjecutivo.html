@@ -57,6 +57,47 @@
       </div>
     </header>
     
+    <main class="flex flex-col items-center justify-center min-h-screen bg-gray-100 pt-8">
+      <div class="flex flex-col items-center w-full max-w-5xl">
+        <div class="bg-blue-500 rounded-full p-4 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17v-2a4 4 0 014-4h14" />
+          </svg>
+        </div>
+        <div class="w-full bg-white rounded-2xl shadow-md overflow-hidden">
+          <div class="flex items-center px-6 py-4 border-b-4 border-blue-700">
+            <div class="bg-yellow-400 p-2 rounded mr-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold">Reporte Ejecutivo</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-gray-700">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-2 border-b">Fecha</th>
+                  <th class="px-4 py-2 border-b">Total Consumos</th>
+                  <th class="px-4 py-2 border-b">Total Monto</th>
+                </tr>
+              </thead>
+              <tbody id="ejecutivoBody">
+                <!-- Aquí van los datos -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-blue-50 font-semibold">
+                  <td class="px-4 py-2 border-t">Total General:</td>
+                  <td class="px-4 py-2 border-t" id="totalConsumosCell">0</td>
+                  <td class="px-4 py-2 border-t font-bold" id="totalMontoCell">$0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        <div id="errorMsg" class="hidden mt-4 text-red-600 font-semibold"></div>
+      </div>
+    </main>
     <script>
       // Mostrar/ocultar menú al hacer clic
       document.addEventListener('DOMContentLoaded', function() {
@@ -69,6 +110,47 @@
         document.addEventListener('click', function() {
           menu.classList.add('hidden');
         });
+
+        // Fetch y render de datos del reporte ejecutivo
+        async function fetchEjecutivo() {
+          const tbody = document.getElementById('ejecutivoBody');
+          const totalConsumosCell = document.getElementById('totalConsumosCell');
+          const totalMontoCell = document.getElementById('totalMontoCell');
+          const errorMsg = document.getElementById('errorMsg');
+          tbody.innerHTML = '';
+          totalConsumosCell.textContent = '0';
+          totalMontoCell.textContent = '$0.00';
+          errorMsg.classList.add('hidden');
+
+          try {
+            const response = await fetch('https://8nuo7sk47l.execute-api.us-east-2.amazonaws.com/dev/reportes/ejecutivo?mes=2025-05');
+            if (!response.ok) throw new Error('No se pudo obtener el reporte');
+            const data = await response.json();
+            if (!Array.isArray(data) || data.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">No hay datos para mostrar</td></tr>';
+              return;
+            }
+            let totalConsumos = 0;
+            let totalMonto = 0;
+            data.forEach(item => {
+              tbody.innerHTML += `
+                <tr>
+                  <td class="px-4 py-2 border-b">${item.fecha || ''}</td>
+                  <td class="px-4 py-2 border-b">${item.total_consumos || 0}</td>
+                  <td class="px-4 py-2 border-b">$${parseFloat(item.total_monto).toFixed(2) || '0.00'}</td>
+                </tr>
+              `;
+              totalConsumos += parseInt(item.total_consumos) || 0;
+              totalMonto += parseFloat(item.total_monto) || 0;
+            });
+            totalConsumosCell.textContent = totalConsumos;
+            totalMontoCell.textContent = `$${totalMonto.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+          } catch (err) {
+            errorMsg.textContent = 'Error al cargar el reporte: ' + err.message;
+            errorMsg.classList.remove('hidden');
+          }
+        }
+        fetchEjecutivo();
       });
     </script>
 </body>
