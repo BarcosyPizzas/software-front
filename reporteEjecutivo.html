@@ -123,28 +123,36 @@
           errorMsg.classList.add('hidden');
 
           try {
-            const response = await fetch('https://8nuo7sk47l.execute-api.us-east-2.amazonaws.com/dev/reportes/ejecutivo?mes=2025-05');
+            const currentDate = new Date();
+            const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // getMonth() returns 0-11
+            const apiUrl = `https://8nuo7sk47l.execute-api.us-east-2.amazonaws.com/dev/reportes/ejecutivo?mes=2025-${currentMonth}`;
+            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`);
+            console.log('Response status:', response.status);
             if (!response.ok) throw new Error('No se pudo obtener el reporte');
             const data = await response.json();
-            if (!Array.isArray(data) || data.length === 0) {
+            console.log('API Response:', data);
+            if (!data) {
+              console.log('No data received');
               tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">No hay datos para mostrar</td></tr>';
               return;
             }
-            let totalConsumos = 0;
-            let totalMonto = 0;
-            data.forEach(item => {
-              tbody.innerHTML += `
-                <tr>
-                  <td class="px-4 py-2 border-b">${item.fecha || ''}</td>
-                  <td class="px-4 py-2 border-b">${item.total_consumos || 0}</td>
-                  <td class="px-4 py-2 border-b">$${parseFloat(item.total_monto).toFixed(2) || '0.00'}</td>
-                </tr>
-              `;
-              totalConsumos += parseInt(item.total_consumos) || 0;
-              totalMonto += parseFloat(item.total_monto) || 0;
+            
+            console.log('Processing data:', {
+              mes: data.mes,
+              total_consumos: data.total_consumos,
+              monto_total: data.monto_total
             });
-            totalConsumosCell.textContent = totalConsumos;
-            totalMontoCell.textContent = `$${totalMonto.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            tbody.innerHTML = `
+              <tr>
+                <td class="px-4 py-2 border-b">${data.mes || ''}</td>
+                <td class="px-4 py-2 border-b">${data.total_consumos || 0}</td>
+                <td class="px-4 py-2 border-b">$${parseFloat(data.monto_total).toFixed(2) || '0.00'}</td>
+              </tr>
+            `;
+            
+            totalConsumosCell.textContent = data.total_consumos || 0;
+            totalMontoCell.textContent = `$${parseFloat(data.monto_total).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
           } catch (err) {
             errorMsg.textContent = 'Error al cargar el reporte: ' + err.message;
             errorMsg.classList.remove('hidden');
