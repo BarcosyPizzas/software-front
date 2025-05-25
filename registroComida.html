@@ -1,61 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Comida</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <header class="flex flex-col md:flex-row items-center justify-between bg-white px-4 md:px-8 py-4 shadow">
-      <!-- Menú móvil -->
-      <div class="md:hidden w-full flex justify-between items-center mb-4">
-        <a href="./index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
-          <div class="bg-blue-500 p-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17v-2a4 4 0 014-4h14" />
-            </svg>
-          </div>
-          <span class="font-bold text-xl">Sistema de Manufactura</span>
-        </a>
-        <button id="mobileMenuBtn" class="p-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+  <!-- HEADER -->
+ <header class="flex items-center justify-between bg-white px-4 py-3 shadow-sm border-b border-gray-200">
+    <div class="flex items-center space-x-6">
+      <!-- Logo y título -->
+      <a href="./index.html" class="flex items-center space-x-2">
+        <div class="bg-blue-600 p-1.5 rounded">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
           </svg>
-        </button>
-      </div>
+        </div>
+        <span class="font-bold text-lg">Sistema de Manufactura</span>
+      </a>
 
-      <!-- Menú desktop -->
-      <div id="desktopMenu" class="hidden md:flex items-center space-x-6">
-        <!-- Icono y título -->
-        <a href="./index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
-          <div class="bg-blue-500 p-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17v-2a4 4 0 014-4h14" />
-            </svg>
-          </div>
-          <span class="font-bold text-2xl">Sistema de Manufactura</span>
-        </a>
-        <!-- Consumos en Tiempo Real -->
-        <a href="./consumoTREAL.html" class="flex items-center space-x-1 hover:opacity-80 transition">
+      <!-- Navegación principal -->
+      <div class="flex items-center space-x-4">
+        <a href="./consumoTREAL.html" class="flex items-center space-x-1 text-gray-800 font-medium">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
           </svg>
-          <span class="text-lg">Consumos en Tiempo Real</span>
+          <span>Consumos en Tiempo Real</span>
         </a>
-        <!-- Administración con menú desplegable -->
+
         <div class="relative group">
-          <button id="adminMenuBtn" class="flex items-center space-x-1 hover:opacity-80 transition focus:outline-none">
+          <button id="adminMenuBtn" class="flex items-center space-x-1 text-gray-800 font-medium focus:outline-none">
             <div class="bg-yellow-400 p-1 rounded">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
             </div>
-            <span class="text-lg">Administración</span>
-            <svg class="w-4 h-4 ml-1 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
+            <span>Administración</span>
           </button>
           <!-- Menú desplegable -->
           <div id="adminMenu" class="hidden absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
@@ -63,66 +45,144 @@
             <a href="./reporteEjecutivo.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Reporte Ejecutivo</a>
           </div>
         </div>
-        <!-- Registro de Comida -->
-        <a href="./registroComida.html" class="flex items-center space-x-1 hover:opacity-80 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M7 10V6a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
-            <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+
+        <a href="./registroComida.html" class="flex items-center space-x-1 text-gray-800 font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M12 4v16m8-8H4" />
           </svg>
-          <span class="text-lg">Registro de Comida</span>
+          <span>Registro de Comida</span>
         </a>
+      </div>
+    </div>
+    
+    <!-- Avatar placeholder -->
+    <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex flex-col items-center justify-center min-h-screen bg-gray-100 pt-8">
+    <form id="registroComidaForm" class="bg-white rounded-2xl shadow-md w-full max-w-xl p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-center">Registro de Comida</h2>
       </div>
 
-      <!-- Menú móvil desplegable -->
-      <div id="mobileMenu" class="hidden md:hidden w-full bg-white border-t border-gray-200">
-        <a href="./consumoTREAL.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-          <div class="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            <span>Consumos en Tiempo Real</span>
-          </div>
-        </a>
-        <div class="px-4 py-2">
-          <div class="flex items-center space-x-2 text-gray-700">
-            <div class="bg-yellow-400 p-1 rounded">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
-              </svg>
-            </div>
-            <span>Administración</span>
-          </div>
-          <div class="pl-8 mt-2">
-            <a href="./reporteDetallado.html" class="block py-2 text-gray-700 hover:bg-gray-100">Reporte Detallado</a>
-            <a href="./reporteEjecutivo.html" class="block py-2 text-gray-700 hover:bg-gray-100">Reporte Ejecutivo</a>
-          </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block font-medium mb-1" for="numeroEmpleado">Número de Empleado:</label>
+          <input id="numeroEmpleado" name="numeroEmpleado" type="text" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
         </div>
-        <a href="./registroComida.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-          <div class="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M7 10V6a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
-              <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            <span>Registro de Comida</span>
-          </div>
-        </a>
+
+        <div>
+          <label class="block font-medium mb-1" for="tipoConsumo">Tipo de Consumo:</label>
+          <select id="tipoConsumo" name="tipoConsumo" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <option value="">Seleccione</option>
+            <option value="desayuno">Desayuno</option>
+            <option value="comida">Comida</option>
+          </select>
+        </div>
+          <div class="space-y-4">
+        <div>
+          <label class="block font-medium mb-1" for="preciocomida">Precio de la comida:</label>
+          <input id="preciocomida" name="preciocomida" type="text" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+        </div>
       </div>
-    </header>
-    
-    <script>
-      // Mostrar/ocultar menú al hacer clic
-      document.addEventListener('DOMContentLoaded', function() {
-        const btn = document.getElementById('adminMenuBtn');
-        const menu = document.getElementById('adminMenu');
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          menu.classList.toggle('hidden');
+
+      <button type="submit" class="w-full mt-6 bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition font-semibold text-lg">Registrar Consumo</button>
+
+      <!-- Mensajes -->
+      <div id="registroMensaje" class="mt-4 text-center text-sm text-green-600 hidden">✅ Consumo registrado correctamente.</div>
+      <div id="registroError" class="mt-4 text-center text-sm text-red-600 hidden">❌ Error al registrar el consumo.</div>
+    </form>
+  </main>
+
+  <!-- SCRIPT -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('registroComidaForm');
+      const mensaje = document.getElementById('registroMensaje');
+      const error = document.getElementById('registroError');
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        console.log('🚀 Iniciando proceso de registro de comida...');
+        mensaje.classList.add('hidden');
+        error.classList.add('hidden');
+
+        const numeroEmpleado = document.getElementById('numeroEmpleado').value.trim();
+        const tipoConsumo = document.getElementById('tipoConsumo').value;
+        const precio = document.getElementById('preciocomida').value.trim();
+
+        console.log('📝 Datos capturados:', {
+          numeroEmpleado,
+          tipoConsumo,
+          precio
         });
-        document.addEventListener('click', function() {
-          menu.classList.add('hidden');
+
+        // Validar horario
+        const ahora = new Date();
+        const hora = ahora.getHours();
+        let horarioValido = false;
+
+        console.log('⏰ Validando horario:', {
+          horaActual: hora,
+          tipoConsumo: tipoConsumo
         });
+
+        if (tipoConsumo === 'desayuno' && hora >= 6 && hora < 11) {
+          horarioValido = true;
+          console.log('✅ Horario válido para desayuno');
+        } else if (tipoConsumo === 'comida' && hora >= 11 && hora < 23) {
+          horarioValido = true;
+          console.log('✅ Horario válido para comida');
+        }
+
+        if (!horarioValido) {
+          console.log('❌ Horario no válido');
+          error.textContent = '❗ El registro no está dentro del horario permitido.';
+          error.classList.remove('hidden');
+          return;
+        }
+
+        // Preparar datos
+        const consumoData = {
+          numero_empleado: numeroEmpleado,
+          tipo_consumo: tipoConsumo,
+          precio: precio,
+          fecha: ahora.toISOString(),
+        };
+
+        console.log('📦 Datos preparados para enviar:', consumoData);
+
+        try {
+          console.log('🌐 Iniciando petición a la API...');
+          const response = await fetch('https://8nuo7sk47l.execute-api.us-east-2.amazonaws.com/dev/consumos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(consumoData)
+          });
+
+          console.log('📡 Respuesta recibida:', {
+            status: response.status,
+            statusText: response.statusText
+          });
+
+          if (response.ok) {
+            console.log('✅ Registro exitoso');
+            mensaje.classList.remove('hidden');
+            form.reset();
+          } else {
+            const errorData = await response.text();
+            console.error('❌ Error en la respuesta:', errorData);
+            throw new Error(`Error ${response.status}: ${errorData}`);
+          }
+        } catch (err) {
+          console.error('❌ Error completo:', err);
+          console.error('Stack trace:', err.stack);
+          error.textContent = `❌ Error al registrar el consumo: ${err.message}`;
+          error.classList.remove('hidden');
+        }
       });
-    </script>
+    });
+  </script>
 </body>
 </html>

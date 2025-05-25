@@ -67,6 +67,28 @@
           <span>Empleado registrado exitosamente</span>
         </div>
       </div>
+
+      <!-- Error Message -->
+      <div id="errorMessage" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span id="errorText">Error al registrar empleado</span>
+        </div>
+      </div>
+
+      <!-- Loading Message -->
+      <div id="loadingMessage" class="hidden fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Registrando empleado...</span>
+        </div>
+      </div>
+
       <div class="flex flex-col items-center mb-8">
         <div class="bg-blue-500 rounded-full p-4">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,7 +113,7 @@
             </div>
             <div>
               <label class="block font-medium mb-1" for="nombreCompleto">Nombre Completo:</label>
-              <input id="nombreCompleto" name="nombreCompleto" type="text" placeholder="Ej.12345" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+              <input id="nombreCompleto" name="nombreCompleto" type="text" placeholder="Ej. Juan Pérez García" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
             </div>
             <div>
               <label class="block font-medium mb-1" for="departamento">Departamento</label>
@@ -127,6 +149,28 @@
       </form>
     </main>
     <script>
+      // Función para mostrar mensajes
+      function showMessage(type, text = '') {
+        // Ocultar todos los mensajes
+        document.getElementById('successMessage').classList.add('hidden');
+        document.getElementById('errorMessage').classList.add('hidden');
+        document.getElementById('loadingMessage').classList.add('hidden');
+        
+        // Mostrar el mensaje específico
+        const messageElement = document.getElementById(type + 'Message');
+        if (text && type === 'error') {
+          document.getElementById('errorText').textContent = text;
+        }
+        messageElement.classList.remove('hidden');
+        
+        // Auto-ocultar después de 5 segundos (excepto loading)
+        if (type !== 'loading') {
+          setTimeout(() => {
+            messageElement.classList.add('hidden');
+          }, 5000);
+        }
+      }
+
       // Mostrar/ocultar menú al hacer clic
       document.addEventListener('DOMContentLoaded', function() {
         const btn = document.getElementById('adminMenuBtn');
@@ -138,12 +182,27 @@
         document.addEventListener('click', function() {
           menu.classList.add('hidden');
         });
+
         // Vista previa de la imagen
         const fotoInput = document.getElementById('fotoEmpleado');
         const preview = document.getElementById('preview');
         fotoInput.addEventListener('change', function(e) {
           const file = e.target.files[0];
           if (file) {
+            // Validar tamaño de archivo (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+              showMessage('error', 'La imagen es demasiado grande. Máximo 5MB.');
+              fotoInput.value = '';
+              return;
+            }
+            
+            // Validar tipo de archivo
+            if (!file.type.startsWith('image/')) {
+              showMessage('error', 'Por favor seleccione un archivo de imagen válido.');
+              fotoInput.value = '';
+              return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(ev) {
               preview.innerHTML = `<img src="${ev.target.result}" class='object-cover w-full h-full rounded'/>`;
@@ -159,57 +218,112 @@
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
           
-          const numeroEmpleado = document.getElementById('numeroEmpleado').value;
-          const nombreCompleto = document.getElementById('nombreCompleto').value;
+          // Mostrar loading
+          showMessage('loading');
+          
+          const numeroEmpleado = document.getElementById('numeroEmpleado').value.trim();
+          const nombreCompleto = document.getElementById('nombreCompleto').value.trim();
           const departamento = document.getElementById('departamento').value;
           const fotoFile = document.getElementById('fotoEmpleado').files[0];
           
-          // Convert image to base64
-          let fotoBase64 = '';
-          if (fotoFile) {
-            fotoBase64 = await new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.readAsDataURL(fotoFile);
-            });
+          // Validaciones básicas
+          if (!numeroEmpleado || !nombreCompleto || !departamento) {
+            showMessage('error', 'Por favor complete todos los campos obligatorios.');
+            return;
           }
 
-          // Create JSON object
+          if (!fotoFile) {
+            showMessage('error', 'Por favor seleccione una foto del empleado.');
+            return;
+          }
+          
+          // Convert image to base64
+          let fotoBase64 = '';
+          try {
+            fotoBase64 = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const base64String = reader.result;
+                // Remove the data:image prefix to get only the base64 string
+                const base64Only = base64String.split(',')[1];
+                if (!base64Only) {
+                  reject(new Error('Error al procesar la imagen: formato inválido'));
+                  return;
+                }
+                resolve(base64Only);
+              };
+              reader.onerror = () => reject(new Error('Error al procesar la imagen'));
+              reader.readAsDataURL(fotoFile);
+            });
+            console.log('Imagen procesada correctamente, longitud:', fotoBase64.length);
+          } catch (error) {
+            console.error('Error al procesar la imagen:', error);
+            showMessage('error', 'Error al procesar la imagen. Por favor, intente nuevamente.');
+            return;
+          }
+
+          // Create JSON object exactly as your Lambda expects
           const employeeData = {
             num_empleado: numeroEmpleado,
             nombre: nombreCompleto,
-            departamento: departamento,
+            departamento: departamento.charAt(0).toUpperCase() + departamento.slice(1),
             foto: fotoBase64
           };
 
-          // Log the JSON data (you can replace this with your API call)
-          console.log(JSON.stringify(employeeData, null, 2));
+          // Log para verificar los datos antes de enviar
+          console.log('Datos a enviar:', {
+            ...employeeData,
+            foto: `[base64 string de ${fotoBase64.length} caracteres]`
+          });
 
-          try{
-            const response = await fetch('https://8nuo7sk47l.execute-api.us-east-2.amazonaws.com/dev/empleados', {
+          try {
+            const apiUrl = 'https://8nuo7sk47l.execute-api.us-east-2.amazonaws.com/dev/empleados';
+            console.log('Iniciando petición a la API...');
+            
+            // Envío directo sin proxy (ya que tu Lambda tiene CORS configurado)
+            const response = await fetch(apiUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
               },
               body: JSON.stringify(employeeData)
             });
-            const result = await response.json();
+
+            console.log('Response status:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+            
+            // Leer la respuesta
+            const responseText = await response.text();
+            console.log('Response text:', responseText);
+
+            let result;
+            try {
+              result = JSON.parse(responseText);
+            } catch (parseError) {
+              console.error('Error parsing JSON response:', parseError);
+              throw new Error('Respuesta inválida del servidor: ' + responseText);
+            }
+            
+            // Verificar si hubo error en la respuesta
+            if (!response.ok) {
+              const errorMessage = result.mensaje || result.error || `Error del servidor: ${response.status}`;
+              throw new Error(errorMessage);
+            }
+
             console.log('Success:', result);
             
             // Show success message
-            const successMessage = document.getElementById('successMessage');
-            successMessage.classList.remove('hidden');
-            
-            // Hide message after 3 seconds
-            setTimeout(() => {
-              successMessage.classList.add('hidden');
-            }, 3000);
+            showMessage('success');
             
             // Reset form
             form.reset();
             preview.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' class='h-12 w-12 text-gray-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4' /></svg>`;
+            
           } catch (error) {
-            console.error('Error:', error);
+            console.error('Error completo:', error);
+            console.error('Stack trace:', error.stack);
+            showMessage('error', error.message);
           }
         });
       });
